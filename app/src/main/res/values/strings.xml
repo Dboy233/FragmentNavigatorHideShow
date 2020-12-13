@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">HSNavHostFragment</string>
+    <string name="home_fragment">Home Fragment</string>
+    <string name="go_my_fragment"><![CDATA[-> My Fragment]]></string>
+    <string name="my_fragment">My Fragment</string>
+    <string name="go_setting_fragment"><![CDATA[-> Setting Fragment]]></string>
+    <string name="setting_fragment">Setting Fragment</string>
+    <string name="back_to_home">返回Home</string>
+</resources>

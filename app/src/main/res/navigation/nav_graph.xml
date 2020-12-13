@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@+id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.dboy.navigation.demo.fragment.HomeFragment"
+        android:label="HomeFragment">
+        <action
+            android:id="@+id/action_homeFragment_to_myFragment"
+            app:destination="@id/myFragment"
+            app:enterAnim="@anim/fragment_translucent_enter"
+            app:exitAnim="@anim/fragment_translucent_exit"
+            app:popEnterAnim="@anim/fragment_translucent_pop_enter"
+            app:popExitAnim="@anim/fragment_translucent_pop_exit" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/myFragment"
+        android:name="com.dboy.navigation.demo.fragment.MyFragment"
+        android:label="MyFragment">
+        <argument
+            android:name="name"
+            android:defaultValue="Def Name"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_myFragment_to_settingFragment"
+            app:destination="@id/settingFragment"
+            app:enterAnim="@anim/fragment_translucent_enter"
+            app:exitAnim="@anim/fragment_translucent_exit"
+            app:popEnterAnim="@anim/fragment_translucent_pop_enter"
+            app:popExitAnim="@anim/fragment_translucent_pop_exit" />
+    </fragment>
+    <fragment
+        android:id="@+id/settingFragment"
+        android:name="com.dboy.navigation.demo.fragment.SettingFragment"
+        android:label="SettingFragment">
+        <!--popUpTo 指定到达的fragment 并且popUpToInclusive 设置为
+        true 这样让站内由到达点所走过的fragment都被移除，而到达点fragment也会
+        重建-->
+        <action
+            android:id="@+id/action_settingFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:enterAnim="@anim/fragment_translucent_enter"
+            app:exitAnim="@anim/fragment_translucent_exit"
+            app:popEnterAnim="@anim/fragment_translucent_pop_enter"
+            app:popExitAnim="@anim/fragment_translucent_pop_exit"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+</navigation>
