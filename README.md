@@ -18,6 +18,11 @@ fragment `hide()`和`Show()`的时候会执行自己的`onPause()`和`onResume()
 
 #### 使用方式
 
+1.粘贴 [FragmentNavigatorHideShow.java](https://github.com/Dboy233/HSNavHostFragment/blob/master/app/src/main/java/com/dboy/navigation/demo/javanav/FragmentNavigatorHideShow.java) 和 [NavHostFragmentHideShow.java](https://github.com/Dboy233/HSNavHostFragment/blob/master/app/src/main/java/com/dboy/navigation/demo/javanav/NavHostFragmentHideShow.java) 到你的项目目录中。
+
+2.在FragmentContrainerView中name属性修改为 "{你的报名路径}.NavHostFragmentHideShow"
+
+
 ``` xml
 
 <?xml version="1.0" encoding="utf-8"?>
@@ -32,6 +37,9 @@ fragment `hide()`和`Show()`的时候会执行自己的`onPause()`和`onResume()
 
 ```
 
-将 name 的值设置为 NavHostFragmentHideShow 即可
+#### 优势
 
+修改代码少，使用便捷，不会对Navigation框架有太大影响。
+
+没有修改Navigation原有的Api调用方式。
 
