@@ -1,4 +1,4 @@
-# NavHostFragmentHideShow
+# NavHostFragmentHideShow&FragmentNavigatorHideShow
 
  通过重写  FragmentNavigator 将原来的 FragmentTransaction.replace() 方法替换为 hide()/Show()
 
