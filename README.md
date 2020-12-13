@@ -4,7 +4,9 @@
 
  再重写HostFragment使用重写后的FragmentNavigator。
 
-fragment `hide()`和`Show()`的时候会执行自己的`onPause()`和`onResume()`函数。避免Fragment的重建。
+Fragment `hide()`和`Show()`触发的时候会触发Fragment的状态改变 `onPause()`和`onResume()`函数。更好的管理Fragmnet状态。
+
+避免Fragment的重建。运行Demo查看Log `"NavigationDemo"`
 
 ####  主要只有两个class
 
