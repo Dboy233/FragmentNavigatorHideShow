@@ -22,7 +22,7 @@ Fragment `hide()`和`Show()`触发的时候会触发Fragment的状态改变 `onP
 
 1.粘贴 [FragmentNavigatorHideShow.java](https://github.com/Dboy233/HSNavHostFragment/blob/master/app/src/main/java/com/dboy/navigation/demo/javanav/FragmentNavigatorHideShow.java) 和 [NavHostFragmentHideShow.java](https://github.com/Dboy233/HSNavHostFragment/blob/master/app/src/main/java/com/dboy/navigation/demo/javanav/NavHostFragmentHideShow.java) 到你的项目目录中。
 
-2.在FragmentContrainerView中name属性修改为 "{你的报名路径}.NavHostFragmentHideShow"
+2.在FragmentContrainerView中name属性修改为 "{你的包名路径}.NavHostFragmentHideShow"
 
 
 ``` xml
