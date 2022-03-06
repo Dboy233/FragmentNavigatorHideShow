@@ -10,9 +10,7 @@ Fragment `hide()`和`Show()`触发的时候会触发Fragment的状态改变 `onP
 
 ####  主要只有两个class
 
-`java`
-
-[FragmentNavigatorHideShow.java](https://github.com/Dboy233/HSNavHostFragment/blob/master/app/src/main/java/com/dboy/navigation/demo/javanav/FragmentNavigatorHideShow.java) 和 [NavHostFragmentHideShow.java](https://github.com/Dboy233/HSNavHostFragment/blob/master/app/src/main/java/com/dboy/navigation/demo/javanav/NavHostFragmentHideShow.java)
+不再提供java版本的
 
 `kotlin`
 
@@ -20,7 +18,7 @@ Fragment `hide()`和`Show()`触发的时候会触发Fragment的状态改变 `onP
 
 #### 使用方式
 
-1.粘贴 [FragmentNavigatorHideShow.java](https://github.com/Dboy233/HSNavHostFragment/blob/master/app/src/main/java/com/dboy/navigation/demo/javanav/FragmentNavigatorHideShow.java) 和 [NavHostFragmentHideShow.java](https://github.com/Dboy233/HSNavHostFragment/blob/master/app/src/main/java/com/dboy/navigation/demo/javanav/NavHostFragmentHideShow.java) 到你的项目目录中。
+1.粘贴 [FragmentNavigatorHideShow.kt](https://github.com/Dboy233/HSNavHostFragment/blob/master/app/src/main/java/com/dboy/navigation/demo/kotlinnav/FragmentNavigatorHideShow.kt) 和 [NavHostFragmentHideShow.kt](https://github.com/Dboy233/HSNavHostFragment/blob/master/app/src/main/java/com/dboy/navigation/demo/kotlinnav/NavHostFragmentHideShow.kt) 到你的项目目录中。
 
 2.在FragmentContrainerView中name属性修改为 "{你的包名路径}.NavHostFragmentHideShow"
 
@@ -31,7 +29,7 @@ Fragment `hide()`和`Show()`触发的时候会触发Fragment的状态改变 `onP
 <androidx.fragment.app.FragmentContainerView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/fragment"
-    android:name="com.dboy.navigation.demo.javanav.NavHostFragmentHideShow"
+    android:name="com.dboy.navigation.demo.kotlinnav.NavHostFragmentHideShow"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:defaultNavHost="true"
