@@ -6,13 +6,13 @@ plugins {
 }
 
 android {
-    compileSdkVersion 31
-    buildToolsVersion "31.0.0"
+    compileSdkVersion 33
+    buildToolsVersion "33.0.0"
 
     defaultConfig {
         applicationId "com.dboy.navigation.demo"
         minSdkVersion 19
-        targetSdkVersion 31
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
 
@@ -32,6 +32,7 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    namespace 'com.dboy.navigation.demo'
 }
 
 dependencies {
@@ -45,7 +46,7 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.7.0'
 
 
-    def nav_version = "2.4.1"
+    def nav_version = "2.5.2"
     // Java language implementation
     implementation "androidx.navigation:navigation-fragment:$nav_version"
     implementation "androidx.navigation:navigation-ui:$nav_version"

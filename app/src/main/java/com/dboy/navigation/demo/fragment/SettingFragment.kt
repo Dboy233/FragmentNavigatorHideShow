@@ -25,5 +25,10 @@ class SettingFragment : BaseFragment() {
             //这两个属性起的作用 只会移除目的地fragment栈之上的fragment
             findNavController().navigate(SettingFragmentDirections.actionSettingFragmentToHomeFragment())
         }
+
+        view.findViewById<Button>(R.id.open_myself).setOnClickListener{
+            //Hide Show 导致的Bug弊端演示.
+            findNavController().navigate(SettingFragmentDirections.actionSettingFragmentToMyself())
+        }
     }
 }

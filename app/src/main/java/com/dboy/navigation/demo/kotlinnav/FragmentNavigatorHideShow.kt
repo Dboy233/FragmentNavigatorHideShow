@@ -1,18 +1,15 @@
 package com.dboy.navigation.demo.kotlinnav
 
 import android.content.Context
-import android.os.Bundle
 import android.util.Log
-import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavDestination
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigator
 import androidx.navigation.fragment.FragmentNavigator
-import java.util.*
 
 /**
  * 使用Hide/Show处理Fragment，使Fragment执行 onPause/onResume.
@@ -35,7 +32,7 @@ class FragmentNavigatorHideShow(
             field.isAccessible = true
             savedIds = field[this] as MutableSet<String>
         } catch (e: Exception) {
-            Log.d(TAG, "反射获取SavedIds失败: ${e.toString()}")
+            Log.d(TAG, "反射获取SavedIds失败: $e")
         }
     }
 
@@ -60,27 +57,77 @@ class FragmentNavigatorHideShow(
         navOptions: NavOptions?,
         navigatorExtras: Navigator.Extras?
     ) {
-        val backStack = state.backStack.value
-        val initialNavigation = backStack.isEmpty()
+        val initialNavigation = state.backStack.value.isEmpty()
         val restoreState = (
                 navOptions != null && !initialNavigation &&
                         navOptions.shouldRestoreState() &&
                         savedIds?.remove(entry.id) == true
                 )
         if (restoreState) {
-            // Restore back stack does all the work to restore the entry
+            // 还原回堆栈完成还原条目的所有工作
             mFragmentManager.restoreBackStack(entry.id)
             state.push(entry)
             return
         }
+        val ft = createFragmentTransaction(entry, navOptions)
+
+
+        if (!initialNavigation) {
+            ft.addToBackStack(entry.id)
+        }
+
+        if (navigatorExtras is Extras) {
+            for ((key, value) in navigatorExtras.sharedElements) {
+                ft.addSharedElement(key, value)
+            }
+        }
+        ft.commit()
+        // The commit succeeded, update our view of the world
+        //todo: 需要判断是否要加入到回退栈。要和createFragmentTransaction中添加fragment的操作同步。当添加fragment失败的时候不应该再增加回退栈。
+        state.push(entry)
+    }
+
+
+    override fun onLaunchSingleTop(backStackEntry: NavBackStackEntry) {
+        if (mFragmentManager.isStateSaved) {
+            Log.i(
+                TAG,
+                "Ignoring onLaunchSingleTop() call: FragmentManager has already saved its state"
+            )
+            return
+        }
+        //重写此方法主要是让他调用修改后的这个方法
+        val ft = createFragmentTransaction(backStackEntry, null)
+        if (state.backStack.value.size > 1) {
+            // If the Fragment to be replaced is on the FragmentManager's
+            // back stack, a simple replace() isn't enough so we
+            // remove it from the back stack and put our replacement
+            // on the back stack in its place
+            mFragmentManager.popBackStack(
+                backStackEntry.id,
+                FragmentManager.POP_BACK_STACK_INCLUSIVE
+            )
+            ft.addToBackStack(backStackEntry.id)
+        }
+        ft.commit()
+        // The commit succeeded, update our view of the world
+        state.onLaunchSingleTop(backStackEntry)
+    }
+
+
+    private fun createFragmentTransaction(
+        entry: NavBackStackEntry,
+        navOptions: NavOptions?
+    ): FragmentTransaction {
         val destination = entry.destination as Destination
         val args = entry.arguments
         var className = destination.className
         if (className[0] == '.') {
             className = mContext.packageName + className
         }
-        //Modify 修改
-        //val frag = mFragmentManager.fragmentFactory.instantiate(mContext.classLoader, className)
+//          注释掉replace逻辑的两行代码，这里是创建了新的fragment 我们要在原有的fragments中查找已经存在的fragment
+//          val frag = mFragmentManager.fragmentFactory.instantiate(mContext.classLoader, className)
+//          frag.arguments = args
         val ft = mFragmentManager.beginTransaction()
         var enterAnim = navOptions?.enterAnim ?: -1
         var exitAnim = navOptions?.exitAnim ?: -1
@@ -95,70 +142,39 @@ class FragmentNavigatorHideShow(
         }
 
         //region 添加的代码
-        var frag: Fragment? = mFragmentManager.primaryNavigationFragment
-        if (frag != null) {
+
+        var frag: Fragment? = mFragmentManager.primaryNavigationFragment //查找当前导航栈顶的fragment
+        if (frag != null) {//如果当前存在，就hide。
             ft.setMaxLifecycle(frag, Lifecycle.State.STARTED)
             ft.hide(frag)
         }
 
+        //查找目标导航fragment 如果查找到了就show这个fragment，如果没有查找到就创建一个新的fragment。
         val tag = destination.id.toString()
         frag = mFragmentManager.findFragmentByTag(tag)
-        if (frag != null) {
+        //如果当前fragment == 目的地fragment，同样创建  这里处理我打开我自己的逻辑，判断是否需要重新创建一个新的 frag。
+        if (frag?.javaClass?.name == className) {
+            frag = mFragmentManager.fragmentFactory.instantiate(mContext.classLoader, className)
+            frag.arguments = args//设置参数.
+            ft.add(mContainerId, frag, tag)
+        } else if (frag != null) {
+            //fragment 已经存在显示
             ft.setMaxLifecycle(frag, Lifecycle.State.RESUMED)
             ft.show(frag)
         } else {
+            //fragment 不存在创建，添加
             frag = mFragmentManager.fragmentFactory.instantiate(mContext.classLoader, className)
-            frag.arguments = args
+            frag.arguments = args//设置参数.
             ft.add(mContainerId, frag, tag)
         }
         //endregion
 
-        //Modify 修改
-        //ft.replace(mContainerId, frag)
-        ft.setPrimaryNavigationFragment(frag)
-        @IdRes val destId = destination.id
-        // TODO Build first class singleTop behavior for fragments
-        val isSingleTopReplacement = (
-                navOptions != null && !initialNavigation &&
-                        navOptions.shouldLaunchSingleTop() &&
-                        backStack.last().destination.id == destId
-                )
-        val isAdded = when {
-            initialNavigation -> {
-                true
-            }
-            isSingleTopReplacement -> {
-                // Single Top means we only want one instance on the back stack
-                if (backStack.size > 1) {
-                    // If the Fragment to be replaced is on the FragmentManager's
-                    // back stack, a simple replace() isn't enough so we
-                    // remove it from the back stack and put our replacement
-                    // on the back stack in its place
-                    mFragmentManager.popBackStack(
-                        entry.id,
-                        FragmentManager.POP_BACK_STACK_INCLUSIVE
-                    )
-                    ft.addToBackStack(entry.id)
-                }
-                false
-            }
-            else -> {
-                ft.addToBackStack(entry.id)
-                true
-            }
-        }
-        if (navigatorExtras is Extras) {
-            for ((key, value) in navigatorExtras.sharedElements) {
-                ft.addSharedElement(key, value)
-            }
-        }
+        //ft.replace(mContainerId, frag) //注释掉原有逻辑
+        ft.setPrimaryNavigationFragment(frag)//将新的目标fragment标记为栈顶。可以这么理解。
         ft.setReorderingAllowed(true)
-        ft.commit()
-        // The commit succeeded, update our view of the world
-        if (isAdded) {
-            state.push(entry)
-        }
+        return ft
     }
+
 
     companion object {
         private const val TAG = "HSFragmentNavigator"

@@ -49,5 +49,17 @@
             app:popExitAnim="@anim/fragment_translucent_pop_exit"
             app:popUpTo="@id/homeFragment"
             app:popUpToInclusive="true" />
+
+
+        <!--Hide show bug演示-->
+        <action
+            android:id="@+id/action_settingFragment_to_myself"
+            app:destination="@id/settingFragment"
+            app:enterAnim="@anim/fragment_translucent_enter"
+            app:exitAnim="@anim/fragment_translucent_exit"
+            app:popEnterAnim="@anim/fragment_translucent_pop_enter"
+            app:popExitAnim="@anim/fragment_translucent_pop_exit"
+         />
+
     </fragment>
 </navigation>
