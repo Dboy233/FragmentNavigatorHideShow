@@ -121,9 +121,9 @@ class FragmentNavigatorHideShow(
     ): FragmentTransaction {
         val destination = entry.destination as Destination
         val args = entry.arguments
-        var className = destination.className
-        if (className[0] == '.') {
-            className = mContext.packageName + className
+        var targetFragmentClassName = destination.className
+        if (targetFragmentClassName[0] == '.') {
+            targetFragmentClassName = mContext.packageName + targetFragmentClassName
         }
 //          注释掉replace逻辑的两行代码，这里是创建了新的fragment 我们要在原有的fragments中查找已经存在的fragment
 //          val frag = mFragmentManager.fragmentFactory.instantiate(mContext.classLoader, className)
@@ -144,26 +144,32 @@ class FragmentNavigatorHideShow(
         //region 添加的代码
 
         var frag: Fragment? = mFragmentManager.primaryNavigationFragment //查找当前导航栈顶的fragment
-        if (frag != null) {//如果当前存在，就hide。
+
+        //判断是否需要重新创建一个新的Fragment
+        var needRecreate = false
+        //提前判断。如果当栈顶Fragment 等于 目的地Fragment。在逻辑上属于自己打开自己。
+        //所以当逻辑是这样的，就需要重新创建一个自己。
+        if (frag?.javaClass?.name == targetFragmentClassName) {
+            needRecreate = true
+        }
+
+        //如果栈顶存在Fragment，就hide。
+        if (frag != null) {
             ft.setMaxLifecycle(frag, Lifecycle.State.STARTED)
             ft.hide(frag)
         }
-
         //查找目标导航fragment 如果查找到了就show这个fragment，如果没有查找到就创建一个新的fragment。
         val tag = destination.id.toString()
         frag = mFragmentManager.findFragmentByTag(tag)
-        //如果当前fragment == 目的地fragment，同样创建  这里处理我打开我自己的逻辑，判断是否需要重新创建一个新的 frag。
-        if (frag?.javaClass?.name == className) {
-            frag = mFragmentManager.fragmentFactory.instantiate(mContext.classLoader, className)
-            frag.arguments = args//设置参数.
-            ft.add(mContainerId, frag, tag)
-        } else if (frag != null) {
+        //这里判断是否需要重建，如果需要重建就不show。而是重新创建一个。
+        if (frag != null && !needRecreate) {
+
             //fragment 已经存在显示
             ft.setMaxLifecycle(frag, Lifecycle.State.RESUMED)
             ft.show(frag)
         } else {
             //fragment 不存在创建，添加
-            frag = mFragmentManager.fragmentFactory.instantiate(mContext.classLoader, className)
+            frag = mFragmentManager.fragmentFactory.instantiate(mContext.classLoader, targetFragmentClassName)
             frag.arguments = args//设置参数.
             ft.add(mContainerId, frag, tag)
         }

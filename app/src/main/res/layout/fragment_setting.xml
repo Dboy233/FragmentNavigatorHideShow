@@ -30,10 +30,10 @@
 
 
     <Button
-        android:id="@+id/open_myself"
+        android:id="@+id/open_video"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="打开我自己"
+        android:text="打开视频页面"
         android:textAllCaps="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
